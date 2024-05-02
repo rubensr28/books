@@ -1,2 +1,2 @@
 # books
-Simple CRUD REST API
+Simple CRUD REST API with Spring boot
