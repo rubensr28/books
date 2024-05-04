@@ -8,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Book;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("books")
 public class BookController {
@@ -21,8 +24,16 @@ public class BookController {
 
     @PutMapping(path = "/{isbn}")
     public ResponseEntity<BookDTO> createBook(@PathVariable String isbn, @RequestBody BookDTO book){
-        if (!book.getIsbn().equals(isbn)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if(!book.getIsbn().equals(isbn)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         BookDTO createdBook = bookService.create(book);
         return new ResponseEntity<BookDTO>(createdBook, HttpStatus.CREATED);
+    }
+
+    @GetMapping(path = "/{isbn}")
+    public ResponseEntity<BookDTO> readBook(@PathVariable String isbn){
+        Optional<BookDTO> foundBook = bookService.findById(isbn);
+
+        return foundBook.map(book -> new ResponseEntity<BookDTO>(book, HttpStatus.OK))
+                .orElse(new ResponseEntity<BookDTO>(HttpStatus.NOT_FOUND));
     }
 }

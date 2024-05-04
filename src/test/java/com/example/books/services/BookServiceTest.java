@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -34,5 +36,24 @@ public class BookServiceTest {
 
         BookDTO result = underTestBookService.create(bookDTO);
         assertEquals(bookDTO,result);
+    }
+
+    @Test
+    public void testFindByIdReturnsEmptyWhenNotFound(){
+        String isbn = "9876543";
+        when(bookRepository.findById(eq(isbn))).thenReturn(Optional.empty());
+        Optional<BookDTO> result = underTestBookService.findById(isbn);
+        assertEquals(Optional.empty(), result);
+    }
+
+    @Test
+    public void testBookFindById(){
+        BookDTO bookDTO = TestData.testBookDTO();
+        BookEntity bookEntity = TestData.testBookEntity();
+
+        when(bookRepository.findById(eq(bookDTO.getIsbn()))).thenReturn(Optional.of(bookEntity));
+
+        Optional<BookDTO> result = underTestBookService.findById(bookDTO.getIsbn());
+        assertEquals(Optional.of(bookDTO), result);
     }
 }
