@@ -4,6 +4,7 @@ import com.example.books.domain.BookDTO;
 import com.example.books.domain.BookEntity;
 import com.example.books.repositories.BookRepository;
 import com.example.books.services.impl.BookServiceImpl;
+import com.example.books.util.TestData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,15 +26,8 @@ public class BookServiceTest {
 
     @Test
     public void testBookIsSaved(){
-        BookDTO bookDTO = BookDTO.builder()
-                .isbn("0123456789")
-                .title("Moby-Dick or The Whale")
-                .author("Herman Melville").build();
-
-        BookEntity bookEntity = BookEntity.builder()
-                .isbn("0123456789")
-                .title("Moby-Dick or The Whale")
-                .author("Herman Melville").build();
+        BookDTO bookDTO = TestData.testBookDTO();
+        BookEntity bookEntity = TestData.testBookEntity();
 
         //Mocking return of bookRepository
         when(bookRepository.save(eq(bookEntity))).thenReturn(bookEntity);
