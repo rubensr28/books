@@ -11,9 +11,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -56,4 +59,47 @@ public class BookServiceTest {
         Optional<BookDTO> result = underTestBookService.findById(bookDTO.getIsbn());
         assertEquals(Optional.of(bookDTO), result);
     }
+
+    @Test
+    public void testListBooksReturnsEmptyWhenNoBooks(){
+        when(bookRepository.findAll()).thenReturn(new ArrayList<BookEntity>());
+        List<BookDTO> result = underTestBookService.listBooks();
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void testListBooksReturnsBooks(){
+        List<BookEntity> testBooks = List.of(TestData.testBookEntity());
+        when(bookRepository.findAll()).thenReturn(testBooks);
+        List<BookDTO> result = underTestBookService.listBooks();
+
+        assertEquals(1,result.size());
+    }
+
+    @Test
+    public void testBookExistsReturnsFalseWhenNoBookExists(){
+        when(bookRepository.existsById(any())).thenReturn(false);
+        boolean result = underTestBookService.bookExists(TestData.testBookDTO());
+        assertFalse(result);
+    }
+
+    @Test
+    public void testBookExistsReturnsTrueWhenBookExists(){
+        when(bookRepository.existsById(any())).thenReturn(true);
+        boolean result = underTestBookService.bookExists(TestData.testBookDTO());
+        assertTrue(result);
+    }
+
+    @Test
+    public void bookIsUpdated(){
+        BookDTO bookDTO = TestData.testBookDTO();
+        BookEntity bookEntity = TestData.testBookEntity();
+
+        when(bookRepository.save(eq(bookEntity))).thenReturn(bookEntity);
+
+        BookDTO result = underTestBookService.updateBook(bookDTO);
+        assertEquals(bookDTO,result);
+    }
+
+
 }

@@ -7,7 +7,9 @@ import com.example.books.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -17,6 +19,11 @@ public class BookServiceImpl implements BookService {
     @Autowired
     public BookServiceImpl(BookRepository bookRepository){
         this.bookRepository = bookRepository;
+    }
+
+    @Override
+    public boolean bookExists(BookDTO book) {
+        return bookRepository.existsById((book.getIsbn()));
     }
 
     @Override
@@ -30,6 +37,20 @@ public class BookServiceImpl implements BookService {
         Optional<BookEntity> foundBook = bookRepository.findById(isbn);
         return foundBook.map(book -> bookEntitytoBookDTO(book));
     }
+
+    @Override
+    public List<BookDTO> listBooks() {
+        List<BookEntity> foundBooks = bookRepository.findAll();
+        return foundBooks.stream().map(book -> bookEntitytoBookDTO(book)).collect(Collectors.toList());
+    }
+
+    @Override
+    public BookDTO updateBook(BookDTO book) {
+        BookEntity bookEntity = bookDTOtoBookEntity(book);
+        bookRepository.delete(bookEntity);
+        return bookEntitytoBookDTO(bookRepository.save(bookEntity));
+    }
+
 
     private BookEntity bookDTOtoBookEntity(BookDTO book){
         return BookEntity.builder()
