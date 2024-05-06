@@ -116,4 +116,18 @@ public class BookControllerIT {
                 .andExpect(jsonPath("$.author").value(book.getAuthor()))
                 .andExpect(jsonPath("$.title").value(book.getTitle()));
     }
+
+    @Test
+    public void testDeleteReturns204WhenBookDoesntExists() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.delete("/books/987654321"))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    public void testDeleteReturns200WhenBookExists() throws Exception{
+        BookDTO book = TestData.testBookDTO();
+        bookService.create(book);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/books/"+book.getIsbn()))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
 }
