@@ -18,7 +18,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
@@ -99,6 +99,16 @@ public class BookServiceTest {
 
         BookDTO result = underTestBookService.updateBook(bookDTO);
         assertEquals(bookDTO,result);
+    }
+
+    @Test
+    public void testDeleteBookDeletesBooks(){
+        BookDTO book = TestData.testBookDTO();
+        BookEntity bookEntity = TestData.testBookEntity();
+        when(bookRepository.save(eq(bookEntity))).thenReturn(bookEntity);
+        underTestBookService.create(book);
+        underTestBookService.deleteBookById(book.getIsbn());
+        verify(bookRepository, times(1)).deleteById(eq(book.getIsbn()));
     }
 
 

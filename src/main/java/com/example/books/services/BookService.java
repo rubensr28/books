@@ -12,4 +12,5 @@ public interface BookService {
     Optional<BookDTO> findById(String isbn);
     List<BookDTO> listBooks();
     BookDTO updateBook(BookDTO book);
+    void deleteBookById(String isbn);
 }

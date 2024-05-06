@@ -52,4 +52,10 @@ public class BookController {
     public ResponseEntity<List<BookDTO>> listBooks(){
         return new ResponseEntity<List<BookDTO>>(bookService.listBooks(), HttpStatus.OK);
     }
+
+    @DeleteMapping(path = "/{isbn}")
+    public ResponseEntity deleteBook(@PathVariable String isbn){
+        bookService.deleteBookById(isbn);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
 }
